@@ -2,12 +2,13 @@ import sys, os
 import time
 
 # This limits the amount of memory used:
+# Hello Testing 123
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 os.environ["TF_XLA_FLAGS"] = "--tf_xla_auto_jit=2"
 
 import tensorflow as tf
-
-
+import matplotlib.pyplot as plt
+import numpy
 
 #########################################################################
 # Here's the Residual layer from the first half again:
@@ -222,8 +223,14 @@ def training_step(network, optimizer, images, labels):
 def train_epoch(i_epoch, step_in_epoch, train_ds, val_ds, network, optimizer, BATCH_SIZE, checkpoint):
     # Here is our training loop!
 
-    steps_per_epoch = int(1281167 / BATCH_SIZE)
-    steps_validation = int(50000 / BATCH_SIZE)
+    steps_per_epoch = 100 #int(1281167 / BATCH_SIZE)
+    steps_validation = 100 #int(50000 / BATCH_SIZE)
+
+        #Create history variable for plot of acc and loss
+    history_acc = numpy.array(0)
+    history_loss = numpy.array(0)
+
+
 
     start = time.time()
     for train_images, train_labels in train_ds.take(steps_per_epoch):
@@ -232,13 +239,35 @@ def train_epoch(i_epoch, step_in_epoch, train_ds, val_ds, network, optimizer, BA
 
         # Peform the training step for this batch
         loss, acc = training_step(network, optimizer, train_images, train_labels)
+        
+        # Update Loss and Acc histories
+        history_acc = numpy.append(history_acc, acc)
+        history_loss = numpy.append(history_loss, loss)
+        
         end = time.time()
         images_per_second = BATCH_SIZE / (end - start)
         print(f"Finished step {step_in_epoch.numpy()} of {steps_per_epoch} in epoch {i_epoch.numpy()},loss={loss:.3f}, acc={acc:.3f} ({images_per_second:.3f} img/s).")
         start = time.time()
+    
+    #Create history variable for plot of acc and loss
+    #history_acc = numpy.zeros(n_epochs, n_steps)
+    #history_loss = numpy.zeros(n_epochs, n_steps)
+
 
     # Save the network after every epoch:
     checkpoint.save("resnet34/model")
+
+    #Creat plots
+    history_acc = numpy.delete(history_acc,0)
+    history_loss = numpy.delete(history_loss, 0)
+    
+
+    plt.plot(range(len(history_acc)),history_acc, 'r')
+    plt.title('accuracy');
+
+    plt.plot(range(len(history_loss)),history_loss, 'b')
+    plt.title('loss');
+    
 
     # Compute the validation accuracy:
     mean_accuracy = None
@@ -300,7 +329,7 @@ def main():
     # Here's some configuration:
     #########################################################################
     BATCH_SIZE = 256
-    N_EPOCHS = 10
+    N_EPOCHS = 1
 
     train_ds, val_ds = prepare_data_loader(BATCH_SIZE)
 
@@ -315,8 +344,6 @@ def main():
     print("output shape:", output.shape)
 
     print(network.summary())
-
-
 
 
     epoch = tf.Variable(initial_value=tf.constant(0, dtype=tf.dtypes.int64), name='epoch')
@@ -342,7 +369,13 @@ def main():
     while epoch < N_EPOCHS:
         train_epoch(epoch, step_in_epoch, train_ds, val_ds, network, optimizer, BATCH_SIZE, checkpoint)
         epoch.assign_add(1)
-        step_in_epoch.assign(0)
-
+        step_in_epoch.assign(0)  
+        
+    #plt.plot(range(len(acc)), acc, 'r')
+    #plt.title('accuracy');
+    
+    #plt.plot(step_in_epoch, loss, 'b')
+    #plt.title('loss');
+    
 if __name__ == "__main__":
     main()
