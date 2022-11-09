@@ -1,0 +1,7 @@
+
+# Session 8 Homework
+
+Session 08 Homework
+
+A problem that I see being solved by AI is the problem of translating and interpreting old texts from the ancient world. While many texts in Latin and ancient Greek have been translated, there are numerous texts that have not been translated in modern times. Furthermore, there are many ancient Arabic texts that have yet to be translated into english that would provide much insight on the ancient world as well. Hence, I would love to use a generative language model, like the Generative PreTrained model or the GPT-3, to translate ancient texts and provide an analysis of them. The generative language model would be trained on ancient texts with its corresponding English translation. Then any basic generative text summarization model could be used. Such a tool would save Classicists hours of labor. 
+	Naturally, success would be measured on how well the translation was performed and would need to be ultimately reviewed by experts in translating the language. However, the summary would be more difficult to prove a success. Regardless, such a tool would be beneficial to Classics, a field that often neglected by science. While generative images are popular right now, I think researchers have only scratched the surface of what generative language models can do. 
